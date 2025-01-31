@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: CI/CD	Workflow	for	SpringGitExample
+name: CI/CD	Workflow for SpringGitExample
 
 on:
   push:
@@ -33,40 +33,39 @@ jobs:
 
     - name: Stop and remove old container
       shell: powershell
-      run:	|
-        $containerName	=	"${{secrets.DOCKER_CONTAINER_NAME}}"
-        $existingContainer	=	docker	ps	-a	--filter	"name=$containerName"	--format	"{{.Names}}"
-        if	($existingContainer	-eq	$containerName)	{
-            Write-Host	"Stopping	and	removing	container:	$containerName"
-            docker	stop	$containerName
-            docker	rm	$containerName
+      run: |
+        $containerName = "${{secrets.DOCKER_CONTAINER_NAME}}"
+        $existingContainer = docker	ps -a	--filter "name=$containerName" --format	"{{.Names}}"
+        if($existingContainer	-eq	$containerName)	{
+            Write-Host "Stopping	and	removing	container:	$containerName"
+            docker stop	$containerName
+            docker rm	$containerName
         }	else	{
-            Write-Host	"No	container	named	$containerName	found."
+            Write-Host "No	container	named	$containerName	found."
         }
-          #	4.	기존	Docker	이미지	삭제
-    -	name:	Remove	old	Docker	image
-      shell:	powershell
+
+    -	name:	Remove old Docker	image
+      shell: powershell
       run:	|
-            $imageName	=	"${{	secrets.DOCKER_IMAGE_NAME	}}"
+            $imageName = "${{	secrets.DOCKER_IMAGE_NAME	}}"
             try	{
-                Write-Host	"Attempting	to	remove	image:	$imageName"
-                docker	rmi	-f	$imageName
-                Write-Host	"Image	$imageName	removed	successfully."
+                Write-Host "Attempting	to	remove	image:	$imageName"
+                docker rmi	-f	$imageName
+                Write-Host "Image	$imageName	removed	successfully."
             }	catch	{
-                Write-Host	"Failed	to	remove	image:	$imageName"
-                Write-Host	"Error:	$_"
+                Write-Host "Failed	to	remove	image:	$imageName"
+                Write-Host "Error:	$_"
             }
 
-    #	5.	Docker	이미지	빌드
+
     -	name:	Build	Docker	image
-      run:	|
-            docker	build	-t	${{	secrets.DOCKER_IMAGE_NAME	}}	.
+      run: |
+            docker build -t	${{	secrets.DOCKER_IMAGE_NAME	}}	.
 
-    #	6.	새	Docker	컨테이너	실행
     -	name:	Run	new	Docker	container
-      run:	|
-            docker	run	-d	--name	${{	secrets.DOCKER_CONTAINER_NAME	}}	-p	8080:8080 ${{	secrets.DOCKER_IMAGE_NAME	}}
+      run: |
+            docker run -d	--name ${{	secrets.DOCKER_CONTAINER_NAME	}} -p 8080:8080 ${{	secrets.DOCKER_IMAGE_NAME	}}
 
-    #	7.	컨테이너	상태	확인
+
     -	name:	Check	running	containers
-      run:	docker	ps
+      run: docker	ps
