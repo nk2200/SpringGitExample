@@ -46,26 +46,24 @@ jobs:
 
     -	name:	Remove old Docker	image
       shell: powershell
-      run:	|
-            $imageName = "${{	secrets.DOCKER_IMAGE_NAME	}}"
-            try	{
-                Write-Host "Attempting	to	remove	image:	$imageName"
-                docker rmi	-f	$imageName
-                Write-Host "Image	$imageName	removed	successfully."
+      run: |
+          $imageName = "${{secrets.DOCKER_IMAGE_NAME}}"
+          try	{
+                Write-Host "Attempting to	remove image:	$imageName"
+                docker rmi -f	$imageName
+                Write-Host "Image	$imageName removed successfully."
             }	catch	{
                 Write-Host "Failed	to	remove	image:	$imageName"
-                Write-Host "Error:	$_"
+                Write-Host "Error: $_"
             }
 
-
-    -	name:	Build	Docker	image
+    -	name:	Build	Docker image
       run: |
-            docker build -t	${{	secrets.DOCKER_IMAGE_NAME	}}	.
+            docker build -t	${{secrets.DOCKER_IMAGE_NAME}}	.
 
     -	name:	Run	new	Docker	container
       run: |
-            docker run -d	--name ${{	secrets.DOCKER_CONTAINER_NAME	}} -p 8080:8080 ${{	secrets.DOCKER_IMAGE_NAME	}}
-
+            docker run -d	--name ${{secrets.DOCKER_CONTAINER_NAME}} -p 8080:8080 ${{secrets.DOCKER_IMAGE_NAME}}
 
     -	name:	Check	running	containers
       run: docker	ps
